@@ -1,0 +1,1 @@
+wap to implement a DFA for a language that accepts strings with even number of a's and odd number of b's
