@@ -2,4 +2,4 @@
 *.pdb
 *.obj
 *.ilk
-*.json
+.vscode/*
