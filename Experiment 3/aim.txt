@@ -1,0 +1,4 @@
+WAP to remove left recursion from
+E -> E+T/T
+T -> T*F/F
+F -> (E)/id
