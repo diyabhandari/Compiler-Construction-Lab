@@ -1,60 +1,71 @@
-//should be for all cases of left recursion
 #include <iostream>
 #include <string>
-#include <vector>
 using namespace std;
-class LeftRecursion{
-  //method that accepts the productions would be public, for each entered production 
-  //we'll then call the function to check if its left recursive, and if it is,
-  //we'll call the function to print the correct productions
 
-  //enter production rules of grammar in the form [NonT,Production1,Production2..]
-  //compare first char of p1,p2.. with NonT
-  //if same, apply removal of left recursion and create a new array
-  //iterate through array to print in the form of A->B/C etc
-  //user can check and fix one production at a time
-  public:
-    void removeLeftRecursion(vector<string> production){
-      vector<string> fixedProduction;
-      string beta ="";
-      string alpha ="";
-      int i;
-      char NT = production[0][0]; //[] -> string [][]-> char
-      for(i=1;i<production.size();i++){
-        if(production[i][0]==NT){
-          cout<<"\nThe production "<<NT<<"->"<<production[i]<<" is left recursive.";
-          //fix later, hardcoded
-          beta = production[i+1];
-          alpha = production[i].substr(1); //drops first char, which is NT
-          break;
-        }
+//there are 2 cases to deal with, the direct one and the indirect one where we can derive the parent non-t to be on the left-most side 
+int main()
+{
+    int choice=1;
+    while(choice){
+      int n;
+      string input="", op1="", op2="", temp; //op1 and op2 are the rewritten productions
+      //op1 : A -> BetaA'
+      //op2 : A' -> aA' | # 
+
+      string c;
+      cout << "Enter the Parent Non-Terminal: " << endl;
+      cin >> c;
+      input+=c;
+      op2 += input + "\'->"; //A'->
+      input += "->";
+      op1 += input; //A->
+      cout << "Enter the number of productions: " << endl;
+      cin >> n;
+      for (int i = 0; i < n; i++)
+      {
+          cout << "Enter the production " << i + 1 << ":" << endl;
+          cin >> temp;
+          input += temp; //A->Aa | Beta
+          if (i != n - 1)
+          {
+              input += "|";
+          }
+          if(i==n-1){
+            input+="#"; //use this as end marker ?
+          }
       }
-      //change the production where its left recursive in original production,
-      //add a new production for NT'
-      production[i]= beta+NT+"'";
-      //remove string at production i+1
-      cout<<"\nAfter removing left recursion from the given production : ";
+      cout << "Production Rule: " << input << endl;
+
+      int onSameProduction = 0;
+      for (int i = 3; i < input.size(); i++) // 0 1 2 is A->
+      {
+        if(onSameProduction==0 && input[i]==input[0]){
+          cout<<"\nLeft recursion detected";
+          onSameProduction=1; //we dont want it printing left recursion found for something like B+A
+          int j=i+1; //one position after position of left recursion
+          while(input[j]!='|'){ //this loop is to add a to op2, nw op2 = A'->a
+            op2+=input[j];
+            j++;
+          }
+          op2+= c+"\'|#"; //now op2 = A'->aA'|#
+          int k=j+1;
+          while(input[k]!='#'){ //because of this, this code only solves for 2 productions per parent non-t
+            op1+=input[k]; //to get op1 = A->Beta
+            k++;
+          }
+          op1+=c+'\''; //op1 = A->BetaA'
+          cout<<"\nAfter removal of left recursion : ";
+          cout << op1 << endl;
+          cout << op2 << endl;
+        }
       
-    }
-    void enterProduction(){
-      vector<string> production;
-      string input="";
-      cout<<"\nInputting the production rules for a single parent nonterminal at a time";
-      int ch=1,num;
-      while(ch==1){
-        cout<<"\nEnter parent nonterminal : ";
-        cin>>input;
-        production.push_back(input);
-        cout<<"\nEnter number of productions : ";
-        cin>>num;
-        for(int i=0;i<num;i++){
-          cout<<"\nEnter the production : ";
-          cin>>input;
-          production.push_back(input);
-        }
-        removeLeftRecursion(production);
-        cout<<"\nPress 1 to enter another production rule : ";
+        if(input[i]=='|'){
+          onSameProduction=0; //means we can now check for left recursion again
+        }      
       }
+      cout << "\nPress 1 to test for another parent non-terminal and its productions : ";
+      cin>>choice;
     }
-
-};
+    
+    return 0;
+}
