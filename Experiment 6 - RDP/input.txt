@@ -1,0 +1,10 @@
+E -> E+T /T
+T -> T*F/F
+F -> (E)/id
+
+removing left recursion:
+E -> TE'
+E' -> +TE'/0 (ill represent epsilon as 0)
+T -> FT'
+T' -> *FT'/0
+F -> (E)/id
