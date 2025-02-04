@@ -36,7 +36,7 @@ void Tprime() {
 }
 
 void F() {
-    if (input[0] == 'i' && input[1] == 'd') {
+    if (*input == 'i' && *(input+1) == 'd') { 
         input += 2;
     }
     else if (*input == '(') {
