@@ -60,7 +60,7 @@ int main() {
         E();
         
         if (*input == '$') {
-            cout<<"\nParsing succesful for : "<< test_inputs[i];
+            cout<<"\nParsing successful for : "<< test_inputs[i];
         } else {
             cout<<"\nParsing failed for : "<< test_inputs[i];
         }
