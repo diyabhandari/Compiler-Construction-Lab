@@ -15,15 +15,28 @@ using namespace std;
 
 //vector of vectors makes a table
 //ive kept blank as "", on getting blank string for production we will print error
+string id = "id";
+//for ease of parsing, Tprime is U, Eprime is G
 vector<vector<string>> parsing_table = {
-  {"blank","id","*","+","(",")","$"}, //word blank denotes first row, of terminals
-  {"E","TEprime","","","TEprime","",""},
-  {"Eprime","","","+TEprime","","0","0"}, //0 is epsilon
-  {"T","FTprime","","","FTprime","",""},
-  {"Tprime","","*FTprime","0","","0","0"},
-  {"F","id","","","(E)","",""}
+  {"blank",id,"*","+","(",")","$"}, //word blank denotes first row, of terminals
+  {"E","TG","","","TG","",""},
+  {"G","","","+TG","","0","0"}, //0 is epsilon
+  {"T","FU","","","FU","",""},
+  {"U","","*FU","0","","0","0"},
+  {"F",id,"","","(E)","",""}
 };
-
+int isTerminal(string inputSymbol){
+    if(inputSymbol == "*" || inputSymbol == "+" || inputSymbol == "$" || inputSymbol == "(" || inputSymbol == ")"){
+        return 1;
+    }
+    else return 0;
+}
+int isNonTerminal(string inputSymbol){
+    if(inputSymbol == "E" || inputSymbol == "G" || inputSymbol == "T" || inputSymbol == "U" || inputSymbol == "F"){
+        return 1;
+    }
+    else return 0;
+}
 int main(){
   string input = "";
   stack<string> inputStack;
@@ -34,13 +47,40 @@ int main(){
   cout<<"E->E+T/T \nT->T*F/F \nF->(E)/id\n";
   cout<<"Enter a string to check if it belongs to this grammar : ";
   cin>>input;
+  int i = 0; //iterator for input string
   while(inputStack.size()>=1){ //it'll always be atleast 1, as $ will be on stack till end
-    for(int i = 0; i < parsing_table.size(); i++){ //go over each vector in the list of vectors
-      //if input symbol and top of stack are the same non-terminal, pop stack and advance input, else parsing failed
-      //if top of stack is NT and input symbol is T, check entry in the table M(A,a), whichever production you get, replace the TOS with the reverse of that production and continue, if none parsing failed 
-      //$ $ success
-
+    
+   if(input[i]=='i' && input[i+1] == 'd'){ //id is there in input string
+    if(inputStack.top() == id){
+        inputStack.pop();
+        i+=2; //id is 2 characters, advance input
     }
-
+    else if(isNonTerminal(inputStack.top())){
+        //check table
+        //if "", parsing failed (compare with id global var)
+        //if not "", pop from stack and then push reverse of stored production
+    }
+   }
+   else{
+    string inputSymbol = input.substr(i,1); //copy 1 char of input, ie the one at i, using this instead of input[i] as that returns a char and our functions are for string
+    if(isTerminal(inputStack.top()) && isTerminal(inputSymbol)){
+        if(inputStack.top() == inputSymbol){
+            inputStack.pop();
+            i++; //advance input
+        }
+        else{
+            cout<<"\nParsing failed";
+        }
+    }
+    else if(isNonTerminal(inputStack.top()) && isTerminal(inputSymbol)){
+        //check table
+        //if "", parsing failed 
+        //if not "", pop from stack and then push reverse of stored production       
+    }
+    if(inputStack.top() == "$" && input[i] == '$'){
+        cout<<"\nParsing successful";
+    }
+   }
   }
+  return 0;
 }
